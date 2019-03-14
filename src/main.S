@@ -23,15 +23,15 @@ main:
 @ movs r0, 0x80000000
 @ subs r0, 1
 
-@ your code goes here
-movs r1, #100 //hp
-movs r2, #100 //mp
-movs r3, #100 //stamina
+@ @ your code goes here
+@ movs r1, #100 //hp
+@ movs r2, #100 //mp
+@ movs r3, #100 //stamina
 
-@ a simple infinite loop
-healthloop:
-  adds r1, #50
-  b healthloop
+@ @ a simple infinite loop
+@ healthloop:
+@   adds r1, #50
+@   b healthloop
 
 @ @Skills!
 @ fireball:@remove 20HP
@@ -67,23 +67,26 @@ healthloop:
 @   movs r2, #0
 @   movs r3, #0  
 
-player_1_init:
+player_2_init:
 @ player 1 init code
   movs r1, #100 //hp
   movs r2, #100 //mp
   movs r3, #100 //stamina
+  b label2
 
-player_2_init:
+player_1_init:
 @ player 2 init code
   movs r8, #100 //hp
   movs r9, #100 //mp
   movs r10, #100 //stamina
+  b label1
 
 player_1_actions:
 @ player 1 actions code
 @Skills!
   fireball:@remove 20HP
     subs r1, #20
+    b label3
 
   frenzy: @remove 20HP, but add 40 stamina
     subs r1, #20
@@ -114,6 +117,7 @@ player_1_actions:
     movs r1, #0
     movs r2, #0
     movs r3, #0
+    b label5
 
 player_2_actions:
 @ player 2 actions code
@@ -124,6 +128,7 @@ player_2_actions:
   frenzy2: @remove 20HP, but add 40 stamina
     subs r8, #20
     adds r10, #40
+    b label4
     
   magic_poison2: @do double the character’s mana attributes in damage (hp := hp - 2 * mana)
     lsl r4, r9, #1
@@ -152,6 +157,27 @@ player_2_actions:
     movs r10, #0
 
 end_loop:
-  nop
-  b end_loop
+  b player_1_init
+  label1:
+  b player_2_init
+  label2:
+
+  b fireball
+  label3:
+  ble player_1_victory
+
+  b frenzy2
+  label4:
+  ble player_2_victory
+
+  b disintegrate
+  label5:
+  ble player_1_victory
+  
+
+player_1_victory:
+  b player_1_victory
+
+player_2_victory:
+  b player_2_victory
   
